@@ -96,9 +96,8 @@ window.addEventListener('keydown', event => {
 function pressRight() {
     const index = Number(modalImageRef.dataset.index);
     if (index < galleryItems.length - 1) {
-        modalImageRef.src = galleryItems[index + 1].original;
-        modalImageRef.alt = galleryItems[index + 1].description;
-        modalImageRef.dataset.index = `${index + 1}`;
+        const operation = index + 1;
+        indexProcessor(operation);
     };
 };
 
@@ -107,8 +106,13 @@ function pressRight() {
 function pressLeft() {
     const index = Number(modalImageRef.dataset.index);
     if (index > 0) {
-        modalImageRef.src = galleryItems[index - 1].original;
-        modalImageRef.alt = galleryItems[index - 1].description;
-        modalImageRef.dataset.index = `${index - 1}`;
-    };
+        const operation = index - 1;
+        indexProcessor(operation);
+    }
 };
+
+function indexProcessor(index) {
+    modalImageRef.src = galleryItems[index].original;
+    modalImageRef.alt = galleryItems[index].description;
+    modalImageRef.dataset.index = `${index}`;
+}
