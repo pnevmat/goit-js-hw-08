@@ -43,11 +43,23 @@ const modalImageRef = document.querySelector('.lightbox__image');
 // слушатель события на открытие модалки
 
 containerListRef.addEventListener('click', () => {
-    modalWindowRef.classList.add('is-open');
-    const currentImgClick = event.target.dataset.source;
-    const currentImgIndex = event.target.dataset.index;
-    modalImageRef.src = currentImgClick;
-    modalImageRef.dataset.index = currentImgIndex;
+    if (event.target.nodeName !== 'IMG') {
+        return;
+    } else {
+        modalWindowRef.classList.add('is-open');
+        const currentImgClick = event.target.dataset.source;
+        const currentImgIndex = event.target.dataset.index;
+        modalImageRef.src = currentImgClick;
+        modalImageRef.dataset.index = currentImgIndex;
+
+        // слушатель события на клавишу esc
+
+        window.addEventListener('keydown', escClickHandler);
+
+        // слушатель события на клавиши вправо\лево
+
+        window.addEventListener('keydown', rightLeftClickHandler);
+    }
 
     event.preventDefault();
 });
@@ -55,33 +67,44 @@ containerListRef.addEventListener('click', () => {
 // слушатель событи на закрытие модалки по клику на кнопку
 
 closeModalBtnRef.addEventListener('click', () => {
-    modalWindowRef.classList.remove('is-open');
-    modalImageRef.src = '';
+    onModalClose();
+    eventListenerRemover();
 });
 
 // ссылка на div.lightbox__overlay
 
 const lightBoxOverlay = document.querySelector('.lightbox__overlay');
 
-// слушатель событи на закрытие модалки по клику на overlay
+// слушатель события на закрытие модалки по клику на overlay
 
 lightBoxOverlay.addEventListener('click', () => {
+    onModalClose();
+    eventListenerRemover();
+});
+
+// обработчик события на клавишу esc
+
+const escClickHandler = event => {
+    if (event.code === 'Escape') {
+        onModalClose();
+        eventListenerRemover();
+    } else {}
+}
+
+// // слушатель события на клавишу esc
+
+// window.addEventListener('keydown', escClickHandler);
+
+// обработчик закрытия модалки
+
+function onModalClose() {
     modalWindowRef.classList.remove('is-open');
     modalImageRef.src = '';
-});
+}
 
-// слушатель события на клавишу esc
+// обработчик события на клавиши вправо\лево
 
-window.addEventListener('keydown', event => {
-    if (event.code === 'Escape') {
-        modalWindowRef.classList.remove('is-open');
-        modalImageRef.src = '';
-    } else {}
-});
-
-// слушатель события на клавиши вправо\лево
-
-window.addEventListener('keydown', event => {
+const rightLeftClickHandler = event => {
     if (modalWindowRef.classList[2] === 'is-open') {
         if (event.code === 'ArrowRight') {
             pressRight();
@@ -89,7 +112,11 @@ window.addEventListener('keydown', event => {
             pressLeft();
         }
     }
-});
+}
+
+// // слушатель события на клавиши вправо\лево
+
+// window.addEventListener('keydown', rightLeftClickHandler);
 
 // функция-обработчик события нажатия клавиши вправо
 
@@ -111,8 +138,17 @@ function pressLeft() {
     }
 };
 
+// обработчик увеличения\уменьшения индекса на 1
+
 function indexProcessor(index) {
     modalImageRef.src = galleryItems[index].original;
     modalImageRef.alt = galleryItems[index].description;
     modalImageRef.dataset.index = `${index}`;
+}
+
+// удаляет слушатели события на esc и клик по оверлею
+
+function eventListenerRemover() {
+    window.removeEventListener('click', escClickHandler);
+    window.removeEventListener('click', rightLeftClickHandler);
 }
